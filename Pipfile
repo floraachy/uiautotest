@@ -1,0 +1,27 @@
+[[source]]
+url = "http://173.15.15.82:8081/repository/group-pypi/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+jsonpath = "==0.82"
+openpyxl = "==3.0.9"
+pytest = "==6.2.5"
+pyyaml = "==6.0"
+requests = "==2.26.0"
+loguru = "*"
+click = "*"
+pytest-rerunfailures = "*"
+faker = "*"
+deepdiff = "*"
+pymysql = "*"
+yagmail = "*"
+selenium = "*"
+pyautogui = "*"
+pywinauto = "*"
+pytest-html = "==2.1.1"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
