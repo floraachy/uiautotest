@@ -45,19 +45,12 @@ class LoginPop(BasePage):
     弹窗登录 (除了首页，注册，找回密码页面，其他都是弹窗登录)
     """
 
-    def __init__(self, driver, host):
-        """
-        host: 环境域名
-        driver：浏览器驱动
-        """
-        self.full_url = url_handle(host, "/explore")
-        self.driver = driver
-
-    def load(self):
+    def load(self, host):
         """访问项目首页"""
-        self.visit(self.full_url)
-        logger.info(f"访问项目首页成功：{self.full_url}")
-        return self
+        full_url = url_handle(host, "/explore")
+        self.visit(full_url)
+        logger.info(f"访问项目首页成功：{full_url}")
+        return full_url
 
     def input_login_info(self, username, password):
         """
@@ -71,7 +64,6 @@ class LoginPop(BasePage):
         self.wait_element_visibility(username_inputbox).send_keys(username)
         self.wait_element_visibility(password_inputbox).send_keys(password)
         time.sleep(5)
-        return self
 
     def login(self, username, password):
         """
@@ -88,7 +80,6 @@ class LoginPop(BasePage):
         time.sleep(5)
         self.wait_element_visibility(login_button_on_pop).click()
         time.sleep(5)
-        return self
 
     def error_pop(self):
         """弹框的错误提示"""
@@ -105,14 +96,10 @@ class LoginPage(BasePage):
     登录页面的一系列操作 (首页，注册，找回密码页面)
     """
 
-    def __init__(self, driver, host):
-        self.full_url = host
-        self.driver = driver
-
-    def load(self):
+    def load(self, host):
         """访问首页"""
-        self.visit(self.full_url)
-        return self
+        full_url = host + "/login"
+        self.visit(full_url)
 
     def login(self, username, password):
         """
@@ -133,14 +120,12 @@ class LoginPage(BasePage):
         self.click(auto_login)
         # 点击登录按钮
         self.click(login_button_on_page)
-        return self
 
     def click_go_register(self):
         """点击 去注册"""
         self.click(go_register_button)
-        return self
 
     def click_forget_password(self):
         """点击 忘记密码"""
         self.click(forget_password_button)
-        return self
+

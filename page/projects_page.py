@@ -20,17 +20,10 @@ avatar = (By.XPATH, "//a[@class='ant-dropdown-trigger']")
 class ProjectsPage(BasePage):
     """项目首页"""
 
-    def __init__(self, driver, host):
-        """
-        host: 项目首页地址
-        driver：浏览器驱动
-        """
-        self.full_url = url_handle(host, "/explore")
-        self.driver = driver
-
-    def load(self):
-        self.visit(self.full_url)
-        logger.info(f"访问项目首页：:{self.full_url}")
+    def load(self, host):
+        full_url = url_handle(host, "/explore")
+        self.visit(full_url)
+        logger.info(f"访问项目首页：:{full_url}")
         return self
 
     def get_avatar(self):

@@ -12,14 +12,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import pyautogui
 from pywinauto.keyboard import send_keys
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium import webdriver
 
 
-class BasePage(object):
+class BasePage:
     """
     UI自动化基础操作封装
     """
-
-    def __int__(self, driver):
+    def __init__(self, driver):
         self.driver = driver
 
     def visit(self, url: str):
@@ -29,12 +30,10 @@ class BasePage(object):
         :return:
         """
         self.driver.get(url)
-        return self
 
     def refresh(self):
         """刷新网页"""
         self.driver.refresh()
-        return self
 
     def click(self, locator: tuple, force=False):
         """
@@ -52,8 +51,6 @@ class BasePage(object):
         except Exception as e:
             print("未找到元素:{}".format(e))
             raise e
-        else:
-            return self
 
     def input(self, locator: tuple, text):
         """
@@ -284,6 +281,5 @@ class BasePage(object):
         action = ActionChains(self.driver)
         action.move_to_element(el).perform()
         return self
-
 
 # ------------------------ END: 鼠标事件：双击，悬停，拖动 ------------------------ #

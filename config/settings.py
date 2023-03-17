@@ -6,8 +6,7 @@
 # @Software: PyCharm
 # @Desc: 项目配置文件
 
-from config.project_path import REPORT_DIR
-import platform
+driver_type = "chrome-headless"
 
 # 测试环境配置
 test = [
@@ -37,23 +36,3 @@ PROJECT_NAME = "GitLink 确实开源"
 TESTER = "测试人员：陈银花"
 DEPARTMENT = "所属部门: 开源协同创新中心"
 
-
-# 浏览器驱动类型
-class RunDriver:
-    """
-    运行的驱动配置信息
-    """
-    # 配置浏览器驱动类型(chrome/firefox/chrome-headless/firefox-headless)。
-    driver_type = "firefox-headless"
-
-    # 浏览器驱动放置的位置，根据不同平台，驱动的位置不一致
-    if platform.system() == "Linux":
-        if "chrome" in driver_type:
-            driver_path = "/usr/bin/chromedriver"
-        if "firefox" in driver_type:
-            driver_path = ""
-    else:
-        if "chrome" in driver_type:
-            driver_path = r"C:\Program Files\Python\Python39\chromedriver.exe"
-        if "firefox" in driver_type:
-            driver_path = r"C:\Program Files\Python\Python39\geckodriver.exe"

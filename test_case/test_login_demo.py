@@ -16,6 +16,7 @@ from data.login_demo_data import cases_data
 from case_utils.data_handle import case_data_replace
 
 
+@pytest.mark.usefixtures("init_driver")
 class TestLoginDemo:
     """
     登录示例
@@ -33,8 +34,6 @@ class TestLoginDemo:
         断言：出现用户昵称以及浏览器地址正确
         """
         logger.info("------------------------------------------开始执行用例------------------------------------------\n")
-        # 首先，清除浏览器缓存
-        init_driver.delete_all_cookies()
 
         # 处理用例数据
         case = case_data_replace(case_data)
@@ -48,18 +47,17 @@ class TestLoginDemo:
 
         # 如果用例数据run=false则跳过该条用例不执行
         if case["run"]:
-            # 初始化浏览器驱动
-            login_page = LoginPop(driver=init_driver, host=host)
-            projects_page = ProjectsPage(driver=init_driver, host=host)
-            # 访问开源项目首页，并进行登录操作
-            login_page.load().login(case["user"], case["password"])
+            # 访问开源项目首页
+            full_url = LoginPop(init_driver).load(host)
+            # 进行登录操作
+            LoginPop(init_driver).login(case["user"], case["password"])
 
             # 断言
             try:
-                logger.info(f"断言浏览器地址是否一致----预期：{login_page.full_url} 实际：{init_driver.current_url}")
-                assert login_page.full_url == init_driver.current_url
+                logger.info(f"断言浏览器地址是否一致----预期：{full_url} 实际：{init_driver.current_url}")
+                assert full_url == init_driver.current_url
                 # 通过定位获取登录后用户的login
-                actual_user_login = projects_page.get_avatar().split("/")[-1]
+                actual_user_login = ProjectsPage(init_driver).get_avatar().split("/")[-1]
                 logger.info(f"断言用户名是否一致----预期：{case['user']} 实际：{actual_user_login}")
                 assert case["user"] == actual_user_login.replace("/", "")
                 logger.info(f"{case['title']}:测试通过！")
@@ -72,4 +70,4 @@ class TestLoginDemo:
             logger.warning(f"{reason}")
             pytest.skip(reason)
 
-        logger.info("------------------------------------------用例执行结束------------------------------------------\n")
+        # logger.info("------------------------------------------用例执行结束------------------------------------------\n")
