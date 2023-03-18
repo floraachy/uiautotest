@@ -6,7 +6,7 @@
 # @Software: PyCharm
 # @Desc: 项目配置文件
 
-driver_type = "chrome-headless"
+drivers_type = ["chrome", "edge"]
 
 # 测试环境配置
 test = [

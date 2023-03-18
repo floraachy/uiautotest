@@ -22,7 +22,7 @@ def case_data_replace(content):
         return None
 
     if len(content) != 0:
-        logger.info(f"开始进行字符串替换: 替换字符串为：{content}")
+        logger.debug(f"开始进行字符串替换: 替换字符串为：{content}")
         content = Template(str(content)).safe_substitute(GLOBAL_VARS)
         logger.debug(f"使用模板函数Template替换字符串完成。 替换后的字符串如下：{content}")
         for func in re.findall('\\${(.*?)}', content):
