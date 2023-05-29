@@ -5,7 +5,7 @@
 # @File    : test_demo.py
 # @Software: PyCharm
 # @Desc: python脚本编写的测试用例文件
-
+import time
 
 import pytest
 from config.global_vars import GLOBAL_VARS
@@ -13,15 +13,19 @@ from loguru import logger
 from page.login_page import LoginPop
 from page.projects_page import ProjectsPage
 from data.login_demo_data import cases_data
-from case_utils.data_handle import case_data_replace
+from common_utils.data_handle import data_replace, eval_data_process
+from case_utils.allure_handle import allure_title
+import allure
 
 
+@allure.feature("登录模块")
 @pytest.mark.usefixtures("init_driver")
 class TestLoginDemo:
     """
     登录示例
     """
 
+    @allure.story("弹窗登录")
     @pytest.mark.parametrize("case_data", cases_data)
     def test_login_pop_success(self, init_driver, case_data):
         """
@@ -33,10 +37,10 @@ class TestLoginDemo:
         4. 点击登录按钮
         断言：出现用户昵称以及浏览器地址正确
         """
-        logger.info("------------------------------------------开始执行用例------------------------------------------\n")
+        logger.info("-----------------------------START-开始执行用例-----------------------------")
 
         # 处理用例数据
-        case = case_data_replace(case_data)
+        case = eval_data_process(data_replace(content=case_data, source=GLOBAL_VARS))
         logger.debug(f"当前执行的用例数据:{case}, {type(case)}")
 
         # 处理URL
@@ -45,12 +49,16 @@ class TestLoginDemo:
         # 处理用例标题
         GLOBAL_VARS["title"] = case["title"]
 
+        # 添加用例标题作为allure中显示的用例标题
+        allure_title(case.get("title", ""))
+
         # 如果用例数据run=false则跳过该条用例不执行
         if case["run"]:
             for driver in init_driver:
                 logger.info(f"当前运行的浏览器驱动是：{driver}")
                 # 访问开源项目首页
                 full_url = LoginPop(driver).load(host)
+                time.sleep(5)
                 # 进行登录操作
                 LoginPop(driver).login(case["user"], case["password"])
 
@@ -72,4 +80,4 @@ class TestLoginDemo:
             logger.warning(f"{reason}")
             pytest.skip(reason)
 
-        # logger.info("------------------------------------------用例执行结束------------------------------------------\n")
+        logger.info("------------------------------------------用例执行结束------------------------------------------\n")

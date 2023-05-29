@@ -1,5 +1,5 @@
 [[source]]
-url = "http://173.15.15.82:8081/repository/group-pypi/simple"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 verify_ssl = true
 name = "pypi"
 
@@ -20,6 +20,9 @@ selenium = "*"
 pyautogui = "*"
 pywinauto = "*"
 pytest-html = "==2.1.1"
+allure-pytest = "*"
+beautifulsoup4 = "*"
+webdriver-manager = "*"
 
 [dev-packages]
 

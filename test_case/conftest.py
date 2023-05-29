@@ -8,7 +8,6 @@
 import pytest
 from config.settings import drivers_type
 from case_utils.get_driver import GetDriver
-from loguru import logger
 
 
 # ------------------------------------- START: 配置浏览器驱动 ---------------------------------------#
