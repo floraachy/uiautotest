@@ -2,7 +2,7 @@
 # @Version: Python 3.9
 # @Time    : 2023/1/31 17:27
 # @Author  : chenyinhua
-# @File    : project_path.py
+# @File    : path_config.py
 # @Software: PyCharm
 # @Desc: 项目相关路径
 import os
@@ -32,11 +32,18 @@ LOG_DIR = os.path.join(OUT_DIR, "log")
 if not os.path.exists(LOG_DIR):
     os.mkdir(LOG_DIR)
 
-
 # 图片保存的目录
 IMG_DIR = os.path.join(OUT_DIR, "image")
 if not os.path.exists(IMG_DIR):
     os.mkdir(IMG_DIR)
-    
+
 # 测试用例模块
 TEST_CASE_DIR = os.path.join(BASE_DIR, "test_case")
+
+# 第三方库目录
+LIB_DIR = os.path.join(BASE_DIR, "lib")
+
+# Allure报告，测试结果集目录
+ALLURE_RESULTS_DIR = os.path.join(REPORT_DIR, "allure_results")
+# Allure报告，HTML测试报告目录
+ALLURE_HTML_DIR = os.path.join(REPORT_DIR, "allure_html")
