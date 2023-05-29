@@ -13,21 +13,28 @@ def url_handle(host, url):
     """
     将host以及url拼接组成full_url
     """
-    if url is None:
-        url = ""
-
-    # 如果url是以http开头的，则直接使用该url，不与host进行拼接
-    if url.lower().startswith("http"):
-        full_url = url
-    else:
-        # 如果host以/结尾 并且 url以/开头
-        if host.endswith("/") and url.startswith("/"):
-            full_url = host[0:len(host) - 1] + url
-        # 如果host以/结尾 并且 url不以/开头
-        elif host.endswith("/") and (not url.startswith("/")):
-            full_url = host + url
+    try:
+        """
+        用例数据中获取到的url(一般是不带host的，个别特殊的带有host，则不进行处理)
+        """
+        # 从用例数据中获取url，如果键url不存在，则返回空字符串
+        # 如果url是以http开头的，则直接使用该url，不与host进行拼接
+        if url.lower().startswith("http"):
+            full_url = url
         else:
-            # # 如果host不以/结尾 或者 url不以/开头，则将host和url拼接起来的时候增加/，组成新的url
-            full_url = host + "/" + url
-    logger.debug("处理前的host:{}, 处理前的url: {}, 处理后的full_url：{}".format(host, url, full_url))
-    return full_url
+            # 如果host以/结尾 并且 url以/开头
+            if host.endswith("/") and url.startswith("/"):
+                full_url = host[0:len(host) - 1] + url
+            # 如果host以/结尾 并且 url不以/开头
+            elif host.endswith("/") and (not url.startswith("/")):
+                full_url = host + url
+            elif (not host.endswith("/")) and url.startswith("/"):
+                # 如果host不以/结尾 且 url以/开头，则将host和url拼接起来，组成新的url
+                full_url = host + url
+            else:
+                # 如果host不以/结尾 且 url不以/开头，则将host和url拼接起来的时候增加/，组成新的url
+                full_url = host + "/" + url
+        return full_url
+    except Exception as e:
+        logger.error(f"处理url报错了：{e}")
+        print(f"处理url报错了：{e}")
