@@ -8,7 +8,7 @@
 
 本框架主要是基于 Python + pytest + selenium + pytest-html/Allure + loguru  + 邮件通知/企业微信通知/钉钉通知 实现的UI自动化框架。
 
-* git地址: [https://gitlink.org.cn/floraachy/uiautotest_pytest.git](https://gitlink.org.cn/floraachy/uiautotest_pytest.git)
+* git地址: [https://gitlink.org.cn/floraachy/uiautotest.git](https://gitlink.org.cn/floraachy/uiautotest.git)
 * 项目参与者: floraachy
 * 技术支持邮箱: 1622042529@qq.com
 * 个人博客地址:  [https://blog.csdn.net/FloraCHY](https://blog.csdn.net/FloraCHY)
@@ -17,7 +17,7 @@
 
 
 ## 二、实现功能
-# todo 待补充
+### todo 待补充
 * 多浏览器支持，根据配置文件，自动下载浏览器驱动
 
 * 日志模块: 采用loguru管理日志，可以输出更为优雅，简洁的日志
@@ -96,19 +96,27 @@ pytest-html = "==2.1.1"
 ## 五、安装教程
 
 1. 通过Git工具clone代码到本地 或者 直接下载压缩包ZIP
+```
+git clone https://gitlink.org.cn/floraachy/uiautotest.git
+```
 
-2. 本地电脑搭建好 python环境，我使用的python版本是3.9
+3. 本地电脑搭建好 python环境，我使用的python版本是3.9
 
-3. 安装pipenv: pip install pipenv（必须在项目根目录下）
 
-4. 使用pipenv管理安装环境依赖包：pipenv shell （必须在项目根目录下执行）
+5. 安装pipenv
+```
+# 建议在项目根目录下执行命令安装
+pip install pipenv
+```
+
+7. 使用pipenv管理安装环境依赖包：pipenv install （必须在项目根目录下执行）
 ```
    注意：使用pipenv install会自动安装Pipfile里面的依赖包，该依赖包仅安装在虚拟环境里，不安装在测试机。
 ```
 如上环境都已经搭建好了，包括框架依赖包也都安装好了。
 
 ## 六、如何创建用例
-# todo 待补充
+### todo 待补充
 
 ## 六、运行自动化测试
 ### 1.  激活已存在的虚拟环境
@@ -128,7 +136,7 @@ pytest-html = "==2.1.1"
 
 ## 初始化项目可能遇到的问题
 ### 1. 测试机安装的是python3.7，但是本框架要求3.9.5，怎么办？
-方法一：建议采纳此方法
+#### 方法一（建议采纳此方法）
 1）首先在项目根目录下打开命令窗口，移除虚拟环境：pipenv --rm
 2）安装虚拟环境时忽略锁定的版本号，同时安装依赖包：pipenv install --skip-lock
 如果使用上述命令报错：Warning: Python 3.9 was not found on your system... Neither 'pyenv' nor 'asdf' could be found to install Python.
@@ -140,7 +148,7 @@ pytest-html = "==2.1.1"
 
 <br/>
 
-方法二：
+#### 方法二
 1）首先在项目根目录下打开命令窗口，移除虚拟环境：pipenv --rm
 2）更改项目根目录下的Pipfile文件
 ```
