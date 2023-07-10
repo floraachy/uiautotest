@@ -8,6 +8,5 @@ __pycache__
 # code related
 outputs
 Pipfile.lock
-test_case/test_auto_case
 .log
 *.log

@@ -4,6 +4,8 @@
 # @File    : files_handle.py
 # @Software: PyCharm
 # @Desc: 处理文件相关操作
+
+# 标准库导入
 import os
 import zipfile
 import shutil
@@ -75,7 +77,7 @@ def zip_file(in_path: str, out_path: str):
     """
     # 如果传入的路径是一个目录才进行压缩操作
     if os.path.isdir(in_path):
-        print("目标路径是一个目录，开始进行压缩......")
+        print(f"目标路径{in_path}是一个目录，开始进行压缩......")
         # 写入
         zip = zipfile.ZipFile(out_path, "w", zipfile.ZIP_DEFLATED)
         for path, dirnames, filenames in os.walk(in_path):
@@ -89,7 +91,7 @@ def zip_file(in_path: str, out_path: str):
         zip.close()
         print("压缩完成！")
     else:
-        print("目标路径不是一个目录，请检查！")
+        print(f"目标路径{in_path}不是一个目录，请检查！")
 
 
 def delete_dir_file(file_path):

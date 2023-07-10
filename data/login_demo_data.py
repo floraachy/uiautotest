@@ -6,8 +6,17 @@
 # @Software: PyCharm
 # @Desc: 登录功能 测试数据
 
-cases_data = [
-    {"title": "正确用户名和密码登录成功 （弹窗登录）",  "user": "${login}", "password": "${password}", "run": True},
-    {"title": "正确用户名和错误密码登录成功 （弹窗登录）",  "user": "${login}", "password": "xxxxxxxx", "run": False}
-             ]
-
+login_case_data = {
+    "case_common":
+        {
+            "allure_epic": "Demo用例",
+            "allure_feature": "登录模块",
+            "allure_story": "弹窗登录"
+        },
+    "case_login_demo_01":
+        {"feature": "登录", "title": "正确用户名和密码登录成功 （弹窗登录）", "user": "${login}", "password": "${password}", "run": True,
+         "severity": "critical"},
+    "case_login_demo_02":
+        {"feature": "登录", "title": "正确用户名和错误密码登录成功 （弹窗登录）", "user": "${login}", "password": "xxxxxxxx", "run": True,
+         "severity": "normal"},
+}
