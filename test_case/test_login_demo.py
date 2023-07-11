@@ -58,6 +58,8 @@ class TestLoginDemo:
         # 如果用例数据run=false则跳过该条用例不执行
         for driver in init_drivers:
             logger.info(f"当前运行的浏览器驱动是：{driver}")
+            # 首先，清除浏览器缓存
+            driver.delete_all_cookies()
             # 访问开源项目首页
             full_url = LoginPop(driver).load(host)
             time.sleep(5)

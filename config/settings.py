@@ -25,7 +25,7 @@ LOG_LEVEL = None
 """
 
 # 浏览器驱动类型配置，支持如下类型："chrome", "chrome-headless", "firefox", "firefox-headless", "edge"
-drivers_type = ["firefox", "edge"]
+drivers_type = ["edge", "firefox"]
 
 # ------------------------------------ 邮件配置信息 ----------------------------------------------------#
 

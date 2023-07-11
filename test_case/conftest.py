@@ -12,7 +12,9 @@ import allure
 from loguru import logger
 # 本地应用/模块导入
 from config.settings import drivers_type
+from config.global_vars import GLOBAL_VARS
 from case_utils.get_driver import GetDriver
+
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -51,6 +53,7 @@ def pytest_collection_modifyitems(config, items):
 @pytest.fixture(scope="session")
 def init_drivers():
     drivers = GetDriver(drivers_type).get_driver()
+    GLOBAL_VARS["drivers"] = drivers
     yield drivers
     for driver in drivers:
         driver.close()

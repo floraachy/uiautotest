@@ -9,13 +9,18 @@
 # 标准库导入
 import re
 import time
+import os
 from time import strftime
+from datetime import datetime
 # 第三方库导入
 from loguru import logger
 from py._xmlgen import html  # 安装pytest-html，版本最好是2.1.1
 import pytest
 # 本地应用/模块导入
-from config.global_vars import ENV_VARS, GLOBAL_VARS, CUSTOM_MARKERS
+from config.global_vars import ENV_VARS, GLOBAL_VARS
+from config.path_config import IMG_DIR
+from case_utils.allure_handle import allure_step
+from case_utils.basepage import BasePage
 
 
 # ------------------------------------- START: pytest钩子函数处理---------------------------------------#
@@ -52,6 +57,26 @@ def pytest_runtest_makereport(item, call):
     # 注意参数传递时需要这样写：@pytest.mark.parametrize("case", cases, ids=["{}".format(case["title"]) for case in cases])
     report.description = re.findall('\\[(.*?)\\]', report.nodeid)[0]
     report.func = report.nodeid.split("[")[0]
+    #  allure-pytest的报错截图添加到报告
+    if report.when == "call" or report.when == "setup":
+        xfail = hasattr(report, "wasxfail")
+        if (report.skipped and xfail) or (report.failed and not xfail):
+            # 截图
+            drivers = GLOBAL_VARS.get("drivers", None)
+            if drivers:
+                for driver in drivers:
+                    # 创建不同浏览器驱动保存截图的目录
+                    driver_dir = os.path.join(IMG_DIR, str(driver).split(".")[2])
+                    os.makedirs(driver_dir, exist_ok=True)
+                    parameters = item.callspec.params["case"]
+                    # print(f"测试用例参数：{type(parameters)}     {parameters}")
+                    file_name = parameters.get("title", "") + "_" + datetime.now().strftime(
+                        "%Y-%m-%d %H_%M_%S") + ".png"
+                    logger.debug(f"{driver}： 进行了截图操作")
+                    BasePage(driver=driver).screenshot(path=driver_dir, filename=file_name)
+                    img_path = os.path.join(driver_dir, file_name)
+                    if img_path:
+                        allure_step(step_title="点击查看失败截图...", content=report.nodeid, source=img_path)
 
 
 def pytest_terminal_summary(terminalreporter, config):
