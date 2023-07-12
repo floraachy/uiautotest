@@ -11,10 +11,9 @@ import pytest
 import allure
 from loguru import logger
 # 本地应用/模块导入
-from config.settings import drivers_type
 from config.global_vars import GLOBAL_VARS
+from config.settings import RunConfig
 from case_utils.get_driver import GetDriver
-
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -51,11 +50,11 @@ def pytest_collection_modifyitems(config, items):
 
 # ------------------------------------- START: 配置浏览器驱动 ---------------------------------------#
 @pytest.fixture(scope="session")
-def init_drivers():
-    drivers = GetDriver(drivers_type).get_driver()
-    GLOBAL_VARS["drivers"] = drivers
-    yield drivers
-    for driver in drivers:
-        driver.close()
-        driver.quit()
+def init_driver():
+    # logger.debug(f"此时的driver类型:{RunConfig.driver_type}")
+    driver = GetDriver(driver_type=RunConfig.driver_type).get_driver()
+    RunConfig.driver = driver
+    yield driver
+    driver.close()
+    driver.quit()
 # ------------------------------------- END: 配置浏览器驱动 ---------------------------------------#

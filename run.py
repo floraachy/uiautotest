@@ -14,22 +14,6 @@
   > python run.py -env live 在live环境运行测试用例
   > python run.py -env=test 在test环境运行测试用例
   > python run.py -report=pytest-html (默认在test环境运行测试用例, 报告采用pytest-html)
-
-pytest相关参数：以下也可通过pytest.ini配置
-     --reruns: 失败重跑次数
-     --reruns-delay 失败重跑间隔时间
-     --count: 重复执行次数
-    -v: 显示错误位置以及错误的详细信息
-    -s: 等价于 pytest --capture=no 可以捕获print函数的输出
-    -q: 简化输出信息
-    -m: 运行指定标签的测试用例
-    -x: 一旦错误，则停止运行
-    --cache-clear 清除pytest的缓存，包括测试结果缓存、抓取的fixture实例缓存和收集器信息缓存等
-    --maxfail: 设置最大失败次数，当超出这个阈值时，则不会在执行测试用例
-    "--reruns=3", "--reruns-delay=2"
-
- allure相关参数：
-    –-alluredir这个选项用于指定存储测试结果的路径
 """
 # 标准库导入
 import os
@@ -38,7 +22,7 @@ import argparse
 import pytest
 from loguru import logger
 # 本地应用/模块导入
-from config.settings import LOG_LEVEL
+from config.settings import LOG_LEVEL, RunConfig
 from config.global_vars import GLOBAL_VARS, ENV_VARS
 from config.path_config import REPORT_DIR, LOG_DIR, CONF_DIR, LIB_DIR, ALLURE_RESULTS_DIR, \
     ALLURE_HTML_DIR
@@ -118,21 +102,25 @@ def generate_allure_report():
     return ALLURE_HTML_DIR, attachment_path
 
 
-def run(env, m, report):
+def run(env, m, report, driver_type):
     try:
         # ------------------------ 捕获日志----------------------------
         capture_logs()
         # ------------------------ 设置全局变量 ------------------------
+        # 设置当前运行的浏览器驱动类型
+        RunConfig.driver_type = driver_type
+        logger.debug(f"命令行参数传递的驱动类型：{RunConfig.driver_type}")
         # 根据指定的环境参数，将运行环境所需相关配置数据保存到GLOBAL_VARS
         GLOBAL_VARS["env_key"] = env.lower()
         if ENV_VARS.get(env.lower()):
             GLOBAL_VARS.update(ENV_VARS[env.lower()])
         # ------------------------ pytest执行测试用例 ------------------------
-        arg_list = []
+        arg_list = [ f"--maxfail={RunConfig.max_fail}", f"--reruns={RunConfig.rerun}",
+                    f"--reruns-delay={RunConfig.reruns_delay}"]
         if m is not None:
             arg_list.append(f"-m {m}")
         if report.lower() == "allure":
-            arg_list.extend(['-q', '--cache-clear', f'--alluredir={ALLURE_RESULTS_DIR}', '--clean-alluredir'])
+            arg_list.extend([f'--alluredir={ALLURE_RESULTS_DIR}', '--clean-alluredir'])
             pytest.main(args=arg_list)
             report_path, attachment_path = generate_allure_report()
         else:
@@ -143,7 +131,7 @@ def run(env, m, report):
             pytest_html_config_path = os.path.join(CONF_DIR, "pytest_html_config")
             report_css = os.path.join(pytest_html_config_path, "pytest_html_report.css")
             # pytest运行的参数
-            arg_list.extend([f'--html={report_path}', f"--css={report_css}"])
+            arg_list.extend(['--self-contained-html', f'--html={report_path}', f"--css={report_css}"])
             # 使用pytest运行测试用例
             pytest.main(args=arg_list)
         # ------------------------ 发送测试结果 ------------------------
@@ -158,5 +146,43 @@ if __name__ == '__main__':
     parser.add_argument("-report", default="allure", help="选择需要生成的测试报告：pytest-html, allure")
     parser.add_argument("-env", default="test", help="输入运行环境：test 或 live")
     parser.add_argument("-m", default=None, help="选择需要运行的用例：python.ini配置的名称")
+    parser.add_argument("-driver", default="chrome",
+                        help="浏览器驱动类型配置，支持如下类型：chrome, chrome-headless, firefox, firefox-headless, edge")
     args = parser.parse_args()
-    run(env=args.env, m=args.m, report=args.report)
+    run(env=args.env, m=args.m, report=args.report, driver_type=args.driver)
+
+"""
+pytest相关参数：以下也可通过pytest.ini配置
+     --reruns: 失败重跑次数
+     --reruns-delay 失败重跑间隔时间
+     --count: 重复执行次数
+    -v: 显示错误位置以及错误的详细信息
+    -s: 等价于 pytest --capture=no 可以捕获print函数的输出
+    -q: 简化输出信息
+    -m: 运行指定标签的测试用例
+    -x: 一旦错误，则停止运行
+    --maxfail: 设置最大失败次数，当超出这个阈值时，则不会在执行测试用例
+    "--reruns=3", "--reruns-delay=2"
+    -s：这个选项表示关闭捕获输出，即将输出打印到控制台而不是被 pytest 截获。这在调试测试时很有用，因为可以直接查看打印的输出。
+
+    --cache-clear：这个选项表示在运行测试之前清除 pytest 的缓存。缓存包括已运行的测试结果等信息，此选项可用于确保重新执行所有测试。
+
+    --capture=sys：这个选项表示将捕获标准输出和标准错误输出，并将其显示在 pytest 的测试报告中。
+
+    --self-contained-html：这个选项表示生成一个独立的 HTML 格式的测试报告文件，其中包含了所有的样式和资源文件。这样，您可以将该文件单独保存，在没有其他依赖的情况下查看测试结果。
+
+    --reruns=0：这个选项表示在测试失败的情况下不重新运行测试。如果设置为正整数，例如 --reruns=3，会在测试失败时重新运行测试最多 3 次。
+
+    --reruns-delay=5：这个选项表示重新运行测试的延迟时间，单位为秒。默认情况下，如果使用了 --reruns 选项，pytest 会立即重新执行失败的测试。如果指定了 --reruns-delay，pytest 在重新运行之前会等待指定的延迟时间。
+
+    -p no:faulthandler 是 pytest 的命令行选项之一，用于禁用 pytest 插件 faulthandler。
+
+    faulthandler 是一个 pytest 插件，它用于跟踪和报告 Python 进程中的崩溃和异常情况。它可以在程序遇到严重错误时打印堆栈跟踪信息，并提供一些诊断功能。
+
+    使用 -p no:faulthandler 选项可以禁用 faulthandler 插件的加载和运行。这意味着 pytest 将不会使用该插件来处理和报告崩溃和异常情况。如果您确定不需要 faulthandler 插件的功能，或者遇到与其加载有关的问题，可以使用这个选项来禁用它。
+
+    请注意，-p no:faulthandler 选项只会禁用 faulthandler 插件，其他可能存在的插件仍然会正常加载和运行。如果您想禁用所有插件，可以使用 -p no:all 选项。
+
+ allure相关参数：
+    –-alluredir这个选项用于指定存储测试结果的路径
+"""

@@ -24,7 +24,7 @@ class ProjectsPage(BasePage):
         full_url = url_handle(host, "/explore")
         self.visit(full_url)
         logger.info(f"访问项目首页：:{full_url}")
-        return self
+        return full_url
 
     def get_avatar(self):
         """获取用户头像"""
