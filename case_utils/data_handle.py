@@ -139,6 +139,22 @@ class FakerData:
         _time_after_week = (date.today() + timedelta(days=+6)).strftime("%Y-%m-%d") + " 00:00:00"
         return _time_after_week
 
+    @classmethod
+    def remove_special_characters(cls, target:str):
+        """
+        移除字符串中的特殊字符。
+        在Python中用replace()函数操作指定字符
+        常用字符unicode的编码范围：
+        数字：\u0030-\u0039
+        汉字：\u4e00-\u9fa5
+        大写字母：\u0041-\u005a
+        小写字母：\u0061-\u007a
+        英文字母：\u0041-\u007a
+        """
+        pattern = r'([^\u4e00-\u9fa5])'
+        result = re.sub(pattern, '', target)
+        return result
+
 
 def data_handle(obj, source):
     """
