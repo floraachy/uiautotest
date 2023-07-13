@@ -63,20 +63,21 @@ def pytest_runtest_makereport(item, call):
         xfail = hasattr(report, "wasxfail")
         if (report.skipped and xfail) or (report.failed and not xfail):
             # 截图
-            driver = RunConfig.driver
-            if driver:
-                logger.debug(f"{driver}： 开始进行截图操作......")
-                # 创建不同浏览器驱动保存截图的目录
-                driver_dir = os.path.join(IMG_DIR, RunConfig.driver_type)
-                os.makedirs(driver_dir, exist_ok=True)
-                parameters = item.callspec.params["case"]
-                # print(f"测试用例参数：{type(parameters)}     {parameters}")
-                file_name = parameters.get("title", "") + "_" + datetime.now().strftime(
-                    "%Y-%m-%d %H_%M_%S") + ".png"
-                BasePage(driver=driver).screenshot(path=driver_dir, filename=file_name)
-                img_path = os.path.join(driver_dir, file_name)
-                if img_path:
-                    allure_step(step_title="点击查看失败截图......", content=report.nodeid, source=img_path)
+            drivers = RunConfig.drivers
+            if drivers:
+                for driver in drivers:
+                    logger.debug(f"{driver}： 开始进行截图操作......")
+                    # 创建不同浏览器驱动保存截图的目录
+                    driver_dir = os.path.join(IMG_DIR,  str(driver).split(".")[2])
+                    os.makedirs(driver_dir, exist_ok=True)
+                    parameters = item.callspec.params["case"]
+                    # print(f"测试用例参数：{type(parameters)}     {parameters}")
+                    file_name = parameters.get("title", "") + "_" + datetime.now().strftime(
+                        "%Y-%m-%d %H_%M_%S") + ".png"
+                    BasePage(driver=driver).screenshot(path=driver_dir, filename=file_name)
+                    img_path = os.path.join(driver_dir, file_name)
+                    if img_path:
+                        allure_step(step_title="点击查看失败截图......", content=report.nodeid, source=img_path)
 
 
 def pytest_terminal_summary(terminalreporter, config):

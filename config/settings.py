@@ -11,12 +11,12 @@ class RunConfig:
     运行测试配置
     """
     # 浏览器类型（不需要修改）
-    driver_type = None
+    driver_type = []
     # 浏览器驱动对象（不需要修改）
-    driver = None
+    drivers = None
 
     # 失败重跑次数
-    rerun = 1
+    rerun = 0
 
     # 失败重跑间隔时间
     reruns_delay = 5

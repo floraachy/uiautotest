@@ -24,35 +24,50 @@ class GetDriver:
     :return:driver
     """
 
-    def __init__(self, driver_type: str):
-        # 判断drivers_type是不是字符串，再判断driver_type的浏览器类型是否符合指定类型
-        if isinstance(driver_type, str) and (
-                driver_type in ["chrome", "chrome-headless", "firefox", "firefox-headless", "edge"]):
-            self.driver_type = driver_type.lower()
+    def __init__(self, drivers_type: str):
+        # 判断drivers_type是不是列表
+        if isinstance(drivers_type, list):
+            # 判断drivers_type的浏览器类型是否符合指定类型，不符合则从列表中移除
+            for index in reversed(range(len(drivers_type))):
+                if drivers_type[index] not in ["chrome", "chrome-headless", "firefox", "firefox-headless", "edge"]:
+                    logger.error(
+                        f"不支持该浏览器类型：{drivers_type[index]}")
+                    # 根据索引移除不支持的浏览器类型
+                    drivers_type.pop(index)
+            # 判断drivers_type是否为空，为空则报错
+            if drivers_type:
+                self.drivers_type = drivers_type
+            else:
+                logger.error("没有支持的浏览器驱动")
+                raise NameError("没有支持的浏览器驱动")
         else:
-            logger.error(f"不支持该浏览器类型：{driver_type}")
-            raise NameError(f"不支持该浏览器类型：{driver_type}")
+            logger.error(f"drivers_type必须是list类型")
+            raise NameError(f"drivers_type必须是list类型")
 
     def get_driver(self):
         """
         根据driver_type初始化不同的浏览器驱动
         """
 
-        driver_type = self.driver_type
-        if driver_type == "chrome":
-            return self.chrome_driver()
+        drivers = []
 
-        if driver_type == "chrome-headless":
-            return self.chrome_headless_driver()
+        for driver_type in self.drivers_type:
+            driver_type = driver_type.lower()
+            if driver_type == "chrome":
+                drivers.append(self.chrome_driver())
 
-        if driver_type == "firefox":
-            return self.firefox_driver()
+            if driver_type == "chrome-headless":
+                drivers.append(self.chrome_headless_driver())
 
-        if driver_type == "firefox-headless":
-            return self.firefox_headless_driver()
+            if driver_type == "firefox":
+                drivers.append(self.firefox_driver())
 
-        if driver_type == "edge":
-            return self.edge_driver()
+            if driver_type == "firefox-headless":
+                drivers.append(self.firefox_headless_driver())
+
+            if driver_type == "edge":
+                drivers.append(self.edge_driver())
+        return drivers
 
     def chrome_driver(self):
         # chrome浏览器

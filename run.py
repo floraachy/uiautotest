@@ -14,6 +14,7 @@
   > python run.py -env live 在live环境运行测试用例
   > python run.py -env=test 在test环境运行测试用例
   > python run.py -report=pytest-html (默认在test环境运行测试用例, 报告采用pytest-html)
+  > python run.py -driver chrome edge  (使用chrome以及edge浏览器运行测试用例)
 """
 # 标准库导入
 import os
@@ -115,7 +116,7 @@ def run(env, m, report, driver_type):
         if ENV_VARS.get(env.lower()):
             GLOBAL_VARS.update(ENV_VARS[env.lower()])
         # ------------------------ pytest执行测试用例 ------------------------
-        arg_list = [ f"--maxfail={RunConfig.max_fail}", f"--reruns={RunConfig.rerun}",
+        arg_list = [f"--maxfail={RunConfig.max_fail}", f"--reruns={RunConfig.rerun}",
                     f"--reruns-delay={RunConfig.reruns_delay}"]
         if m is not None:
             arg_list.append(f"-m {m}")
@@ -146,7 +147,7 @@ if __name__ == '__main__':
     parser.add_argument("-report", default="allure", help="选择需要生成的测试报告：pytest-html, allure")
     parser.add_argument("-env", default="test", help="输入运行环境：test 或 live")
     parser.add_argument("-m", default=None, help="选择需要运行的用例：python.ini配置的名称")
-    parser.add_argument("-driver", default="chrome",
+    parser.add_argument("-driver", default=["chrome"], nargs='*',
                         help="浏览器驱动类型配置，支持如下类型：chrome, chrome-headless, firefox, firefox-headless, edge")
     args = parser.parse_args()
     run(env=args.env, m=args.m, report=args.report, driver_type=args.driver)
