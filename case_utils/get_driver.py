@@ -14,6 +14,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 # selenium 4
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.edge.service import Service as EdgeService
 
@@ -74,7 +75,11 @@ class GetDriver:
         # selenium 3的写法
         # driver = webdriver.Chrome(ChromeDriverManager().install())
         # selenium 4的写法
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        options = Options()
+        # 去掉"chrome正受到自动化测试软件的控制"的提示条
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option('useAutomationExtension', False)
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
         driver.maximize_window()
         driver.implicitly_wait(10)
         driver.delete_all_cookies()  # 清除浏览器所有缓存
