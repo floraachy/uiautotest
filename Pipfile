@@ -22,6 +22,7 @@ pytest-html = "==2.1.1"
 allure-pytest = "*"
 beautifulsoup4 = "*"
 webdriver-manager = "*"
+requests-toolbelt = "*"
 
 [dev-packages]
 

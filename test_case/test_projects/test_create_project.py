@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2023/7/14 14:39
 # @Author  : chenyinhua
-# @File    : test_new_project.py
+# @File    : test_create_project.py
 # @Software: PyCharm
 # @Desc:
 # 标准库导入
@@ -12,7 +12,9 @@ from loguru import logger
 # 本地应用/模块导入
 from config.global_vars import GLOBAL_VARS
 from page.common_page import CommonPage
+from page.home_page import HomePage
 from page.projects.create_project_page import CreateProjectPage
+from page.projects.project_detail_page import ProjectDetailPage
 from data.create_project_data import *
 from case_utils.data_handle import data_handle, eval_data_process
 from case_utils.allure_handle import allure_title, allure_step
@@ -26,7 +28,7 @@ class TestNewProject:
     @allure.story(new_project_success["allure_story"])
     @pytest.mark.parametrize("case", new_project_success["cases"],
                              ids=["{}".format(case["title"]) for case in new_project_success["cases"]])
-    def test_new_project(self, init_drivers, case):
+    def test_new_project(self, init_drivers, case, login_api):
         logger.debug("\n-----------------------------START-开始执行用例-----------------------------\n")
         # 处理用例数据
         case = eval_data_process(data_handle(obj=case, source=GLOBAL_VARS))
@@ -44,10 +46,38 @@ class TestNewProject:
             driver.delete_all_cookies()
             allure_step(step_title="清除浏览器缓存")
 
+            HomePage(driver).load(host)
+
+            # 遍历 cookies 字典并添加到 WebDriver 中
+            login_cookies = login_api[0]
+            for name, value in login_cookies.items():
+                """
+                add_cookie() 方法是 WebDriver 的方法，用于向浏览器添加 cookie。正确的方法调用应该只有两个参数：name 和 value
+                """
+                driver.add_cookie({"name": name, "value": value})
+
+            # 刷新页面
+            driver.refresh()
             CommonPage(driver).click_new_icon()
             CommonPage(driver).click_create_project_button()
             CreateProjectPage(driver).new_project(**case)
 
+            # 断言
+            project_full_name = f"{login_api[1]['login']}/{case['identifier']}"
+            project_url = f"{host}{project_full_name}"
+            logger.info(f"断言--> 浏览器地址是否一致----预期：{project_url} 实际：{driver.current_url}")
+            allure_step(step_title=f"断言--> 浏览器地址是否一致----预期：{project_url} 实际：{driver.current_url}")
+            assert project_url == driver.current_url
+            result = ProjectDetailPage(driver).get_project_private_tag()
+            allure_step(step_title=f"断言--> 是否存在 私有 标签 预期： {case.get('private')}  实际：{result}")
+            assert case.get('private') == result
+            # if case.get("private"):
+            #
+            #     assert result
+            # else:
+            #     allure_step(step_title=f"断言--> 是否存在 私有 标签 预期： False  实际：{result}")
+            #     assert result
+
             logger.debug(f"{case['title']}:测试通过！")
             logger.debug(
-                "\n------------------------------------------用例执行结束------------------------------------------\n")
+                "\n------------------------------------------END-用例执行结束------------------------------------------\n")

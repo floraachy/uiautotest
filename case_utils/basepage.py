@@ -5,21 +5,23 @@
 # @Software: PyCharm
 # @Desc: UI自动化测试的一些基础浏览器操作方法
 
+# 标准库导入
 import os
+# 第三方库导入
+from loguru import logger
+import pyautogui
+from pywinauto.keyboard import send_keys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-import pyautogui
-from pywinauto.keyboard import send_keys
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium import webdriver
 
 
 class BasePage:
     """
     UI自动化基础操作封装
     """
+
     def __init__(self, driver):
         self.driver = driver
 
@@ -157,9 +159,13 @@ class BasePage:
         :return:
         """
         try:
-            return self.driver.find_elements(*locator)
+            logger.debug(f"正在定位页面的: {locator} 的元素")
+            print(f"正在定位页面的: {locator} 的元素")
+            element_list = self.driver.find_elements(*locator)
+            return element_list
         except NoSuchElementException as e:
-            print("未找到元素:{}".format(e))
+            logger.error(f"页面定位元素:{locator}定位失败, 错误信息：{e}")
+            print(f"页面定位元素:{locator}定位失败, 错误信息：{e}")
             raise e
 
     def get_text(self, locator: tuple):

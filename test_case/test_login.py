@@ -6,8 +6,7 @@
 # @Software: PyCharm
 # @Desc: python脚本编写的测试用例文件
 
-# # 标准库导入
-import time
+# 标准库导入
 # 第三方库导入
 import pytest
 import allure
@@ -16,7 +15,8 @@ from loguru import logger
 from config.global_vars import GLOBAL_VARS
 from page.home_page import HomePage
 from page.login_page import LoginPop, LoginPage
-from page.projects_page import ProjectsPage
+from page.projects.projects_page import ProjectsPage
+from page.common_page import CommonPage
 from data.login_data import *
 from case_utils.data_handle import data_handle, eval_data_process
 from case_utils.allure_handle import allure_title, allure_step
@@ -60,17 +60,12 @@ class TestLogin:
             allure_step(step_title="清除浏览器缓存")
 
             full_url = ProjectsPage(driver).load(host)
-            allure_step(step_title=f"访问：{full_url}")
-            time.sleep(5)
 
-            HomePage(driver).click_login_button()
-            allure_step(step_title=f"游客状态下 点击 右上角 登录 按钮")
+            CommonPage(driver).click_login_button()
 
             LoginPop(driver).input_login_info(case["user"], case["password"])
-            allure_step(step_title=f"输入--> 用户名: {case['user']}  密码：{case['password']}")
 
             LoginPop(driver).submit_login()
-            allure_step(step_title=f"点击登录按钮，提交登录表单")
 
             # 断言
             expected_url = full_url
@@ -86,7 +81,7 @@ class TestLogin:
 
             logger.debug(f"{case['title']}:测试通过！")
             logger.debug(
-                "\n------------------------------------------用例执行结束------------------------------------------\n")
+                "\n------------------------------------------END-用例执行结束------------------------------------------\n")
 
     @allure.story(login_page_success["allure_story"])
     @pytest.mark.parametrize("case", login_page_success["cases"],
@@ -119,30 +114,26 @@ class TestLogin:
             driver.delete_all_cookies()
             allure_step(step_title="清除浏览器缓存")
 
-            full_url = HomePage(driver).load(host)
-            allure_step(step_title=f"访问：{full_url}")
-            time.sleep(5)
+            HomePage(driver).load(host)
 
-            HomePage(driver).click_login_button()
-            allure_step(step_title=f"游客状态下 点击 右上角 登录 按钮")
+            CommonPage(driver).click_login_button()
 
             LoginPage(driver).input_login_info(case["user"], case["password"])
-            allure_step(step_title=f"输入--> 用户名: {case['user']}  密码：{case['password']}")
 
             LoginPage(driver).submit_login()
-            allure_step(step_title=f"点击登录按钮，提交登录表单")
 
             # 断言
             expected_url = f"{host}{case['user']}"
             logger.debug(f"断言--> 浏览器地址是否一致----预期：{expected_url} 实际：{driver.current_url}")
-            assert expected_url == driver.current_url
             allure_step(step_title=f"断言--> 浏览器地址是否一致----预期：{expected_url} 实际：{driver.current_url}")
+            assert expected_url == driver.current_url
 
             # 通过定位获取登录后用户的login
             actual_user_login = ProjectsPage(driver).get_avatar().split("/")[-1]
             logger.debug(f"断言--> 用户名是否一致----预期：{case['user']} 实际：{actual_user_login}")
-            assert case["user"] == actual_user_login.replace("/", "")
             allure_step(step_title=f"断言--> 用户名是否一致----预期：{case['user']} 实际：{actual_user_login}")
+            assert case["user"] == actual_user_login.replace("/", "")
 
             logger.debug(f"{case['title']}:测试通过！")
-            logger.debug("\n------------------------------------------用例执行结束------------------------------------------\n")
+            logger.debug(
+                "\n------------------------------------------END-用例执行结束------------------------------------------\n")

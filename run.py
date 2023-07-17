@@ -34,6 +34,7 @@ from common_utils.files_handle import zip_file, copy_file
 
 
 def capture_logs(level=LOG_LEVEL):
+    logger.remove(handler_id=None)  # 清除之前的设置
     logger.info("""
                         _    _         _      _____         _
          __ _ _ __ (_)  / \\  _   _| |_ __|_   _|__  ___| |_
@@ -45,20 +46,23 @@ def capture_logs(level=LOG_LEVEL):
            """)
     if level:
         # 仅捕获指定级别日志
-        logger.add(
-            os.path.join(LOG_DIR, "runtime_{time}.log"),
-            enqueue=True,
-            encoding="utf-8",
-            rotation="00:00",
-            level=LOG_LEVEL.upper(),
-            format="{time:YYYY-MM-DD HH:mm:ss} {level} From {module}.{function} : {message}",
-        )
+        # 设置生成日志文件，utf-8编码，每天0点切割，zip压缩，保留3天，异步写入
+        logger.add(sink=os.path.join(LOG_DIR, "runtime_{time}.log"),
+                   level=LOG_LEVEL.upper(),
+                   rotation="00:00",
+                   retention="3 days",
+                   compression="zip",
+                   encoding="utf-8",
+                   enqueue=True,
+                   format="{time:YYYY-MM-DD HH:mm:ss} {level} From {module}.{function} : {message}")
     else:
         # 捕获所有日志
         logger.add(
-            os.path.join(LOG_DIR, "runtime_{time}_all.log"),
+            sink=os.path.join(LOG_DIR, "runtime_{time}_all.log"),
             enqueue=True,
             encoding="utf-8",
+            retention="3 days",
+            compression="zip",
             rotation="00:00",
             format="{time:YYYY-MM-DD HH:mm:ss} {level} From {module}.{function} : {message}",
         )

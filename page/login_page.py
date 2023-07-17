@@ -10,8 +10,9 @@ import time
 # 第三方库导入
 from selenium.webdriver.common.by import By
 # 本地应用/模块导入
-from case_utils.url_handle import url_handle
 from case_utils.basepage import BasePage
+from case_utils.allure_handle import allure_step
+from case_utils.url_handle import url_handle
 
 # ------------------------------ 登录弹窗元素定位 ---------------------------------------#
 # 弹框中的用户名输入框
@@ -51,6 +52,7 @@ class LoginPop(BasePage):
         self.wait_element_visibility(username_inputbox).send_keys(username)
         self.wait_element_visibility(password_inputbox).send_keys(password)
         time.sleep(5)
+        allure_step(step_title=f"输入--> 用户名: {username}  密码：{password}")
 
     def submit_login(self):
         """
@@ -58,6 +60,7 @@ class LoginPop(BasePage):
         """
         self.wait_element_visibility(login_button_on_pop).click()
         time.sleep(5)
+        allure_step(step_title=f"点击登录按钮，提交登录表单")
 
     def error_pop(self):
         """弹框的错误提示"""
@@ -77,8 +80,9 @@ class LoginPage(BasePage):
 
     def load(self, host):
         """访问首页"""
-        full_url = host + "/login"
+        full_url = url_handle(host, "/login")
         self.visit(full_url)
+        allure_step(step_title=f"访问：{full_url}")
         return full_url
 
     def input_login_info(self, username, password):
@@ -89,9 +93,13 @@ class LoginPage(BasePage):
         self.input(login_username, username)
         # 输入密码
         self.input(login_password, password)
+        time.sleep(1)
+        allure_step(step_title=f"输入--> 用户名: {username}  密码：{password}")
+
+    def check_auto_login_button(self):
         # 勾选自动登录
         self.click(auto_login)
-        time.sleep(1)
+        allure_step(step_title="勾选自动登录按钮")
 
     def submit_login(self):
         """
@@ -100,11 +108,14 @@ class LoginPage(BasePage):
         # 点击登录按钮
         self.wait_element_visibility(login_button_on_page).click()
         time.sleep(5)
+        allure_step(step_title=f"点击登录按钮，提交登录表单")
 
     def click_go_register(self):
         """点击 去注册"""
         self.click(go_register_button)
+        allure_step(step_title=f"点击去注册按钮，进入注册页面")
 
     def click_forget_password(self):
         """点击 忘记密码"""
         self.click(forget_password_button)
+        allure_step(step_title=f"点击忘记密码按钮，进入找回密码页面")

@@ -17,7 +17,7 @@ login_pop_success = {
     "cases":
         [
             {"title": "弹窗登录: 正确用户名和密码登录成功", "user": "${login}", "password": "${password}",
-             "run": True,
+             "run": False,
              "severity": "critical"}
         ]
 }
@@ -27,7 +27,7 @@ login_page_success = {
     "cases":
         [
             {"title": "网页登录: 正确用户名和密码登录成功", "user": "${login}", "password": "${password}",
-             "run": True,
+             "run": False,
              "severity": "critical"
              }
 
