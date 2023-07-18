@@ -8,6 +8,8 @@
 # 标准库导入
 import os
 # 第三方库导入
+import time
+
 from loguru import logger
 import pyautogui
 from pywinauto.keyboard import send_keys
@@ -63,6 +65,8 @@ class BasePage:
         """
         try:
             elem = self.driver.find_element(*locator)
+            elem.clear()  # 清空输入框中的文本内容
+            time.sleep(1)
             elem.send_keys(text)
             return self
         except NoSuchElementException as e:

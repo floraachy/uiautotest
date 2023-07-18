@@ -6,7 +6,6 @@
 # @Desc:
 
 # 标准库导入
-import json
 # 第三方库导入
 import pytest
 import requests
@@ -46,3 +45,4 @@ def login_api():
     except Exception as e:
         GLOBAL_VARS["login_cookie"] = None
         logger.error(f"获取用户：{login}登录的cookies失败：{e}")
+

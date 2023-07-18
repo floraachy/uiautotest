@@ -19,6 +19,8 @@ from case_utils.url_handle import url_handle
 export_url = (By.XPATH, "//input[@id='NewWorkForm_clone_addr']")
 # 需要授权验证
 authorization_button = (By.XPATH, "//p[contains(text(), '需要授权验证')]")
+# 导入仓库的token
+token_inputbox = (By.ID, "NewWorkForm_auth_token")
 # 导入仓库来源的用户名
 mirror_username = (By.XPATH, "//input[@id='NewWorkForm_auth_username']")
 # 导入仓库来源的密码
@@ -181,14 +183,18 @@ class CreateProjectPage(BasePage):
 
         if kwargs.get("mirror_private"):
             self.click(authorization_button)
-            self.input(mirror_username, kwargs.get("mirror_user"))
-            self.input(mirror_password, kwargs.get("mirror_pwd"))
-            allure_step(step_title=f"点击输入授权验证，输入导入仓库对应用户名及密码：{kwargs.get('mirror_user')}， {kwargs.get('mirror_pwd')}")
+            allure_step(step_title=f"点击输入授权验证")
+            if kwargs.get("mirror_url").startswith("https://github.com"):
+                self.input(token_inputbox, kwargs.get("auth_token"))
+                allure_step(step_title=f"输入平台用户授权token：{kwargs.get('auth_token')}")
+            else:
+                self.input(mirror_username, kwargs.get("auth_user"))
+                self.input(mirror_password, kwargs.get("auth_password"))
+                allure_step(step_title=f"输入导入仓库对应用户名及密码：{kwargs.get('mirror_user')}， {kwargs.get('mirror_pwd')}")
 
-            # 输入项目名称，项目标识以及项目简介
-            self.input_project_name_identify_desc(name=kwargs.get('name'), identifier=kwargs.get('identifier'),
-                                                  desc=kwargs.get('desc'))
-
+        # 输入项目名称，项目标识以及项目简介
+        self.input_project_name_identify_desc(name=kwargs.get('name'), identifier=kwargs.get('identifier'),
+                                              desc=kwargs.get('desc'))
         if kwargs.get("private"):
             # 设置项目为私有
             self.check_private_checkbox()
@@ -197,7 +203,7 @@ class CreateProjectPage(BasePage):
         if kwargs.get("mirror_type"):
             # 该仓库将是一个镜像(设置为镜像后，该项目为只读，不能进行push等相关操作)
             self.click(mirror_type)
-            allure_step(step_title=f"勾选该仓库是一个景霞仓库")
+            allure_step(step_title=f"勾选该仓库是一个镜像仓库")
 
         # 选择项目类别和语言
         self.choose_project_type_language(**kwargs)

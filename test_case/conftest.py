@@ -32,7 +32,7 @@ def pytest_collection_modifyitems(config, items):
         # 注意这里的"case"需要与@pytest.mark.parametrize("case", cases)中传递的保持一致
         parameters = item.callspec.params["case"]
         # print(f"测试参数：{type(parameters)}     {parameters}")
-        if parameters.get("severity"):
+        if parameters and parameters.get("severity"):
             if parameters["severity"].upper() == "TRIVIAL":
                 item.add_marker(allure.severity(allure.severity_level.TRIVIAL))
             elif parameters["severity"].upper() == "MINOR":
