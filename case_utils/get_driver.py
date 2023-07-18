@@ -130,7 +130,12 @@ class GetDriver:
         # selenium 3
         # driver = webdriver.Edge(EdgeChromiumDriverManager().install())
         # selenium 4
-        driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()))
+        edge_options = webdriver.EdgeOptions()
+        edge_options.use_chromium = True
+        # 屏蔽inforbar
+        edge_options.add_experimental_option('useAutomationExtension', False)
+        edge_options.add_experimental_option('excludeSwitches', ['enable-automation', 'enable-logging'])
+        driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=edge_options)
         driver.maximize_window()
         driver.implicitly_wait(10)
         driver.delete_all_cookies()  # 清除浏览器所有缓存
