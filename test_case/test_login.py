@@ -18,7 +18,7 @@ from page.login_page import LoginPop, LoginPage
 from page.projects.projects_page import ProjectsPage
 from page.common_page import CommonPage
 from data.login_data import *
-from case_utils.data_handle import data_handle, eval_data_process
+from case_utils.data_handle import data_handle
 from case_utils.allure_handle import allure_title, allure_step
 
 
@@ -44,7 +44,7 @@ class TestLogin:
         """
         logger.debug("\n-----------------------------START-开始执行用例-----------------------------\n")
         # 处理用例数据
-        case = eval_data_process(data_handle(obj=case, source=GLOBAL_VARS))
+        case = data_handle(obj=case, source=GLOBAL_VARS)
         logger.debug(f"当前执行的用例数据:{case}, {type(case)}")
 
         # 处理URL
@@ -98,7 +98,7 @@ class TestLogin:
         """
         logger.debug("\n-----------------------------START-开始执行用例-----------------------------\n")
         # 处理用例数据
-        case = eval_data_process(data_handle(obj=case, source=GLOBAL_VARS))
+        case = data_handle(obj=case, source=GLOBAL_VARS)
         logger.debug(f"当前执行的用例数据:{case}, {type(case)}")
 
         # 处理URL
